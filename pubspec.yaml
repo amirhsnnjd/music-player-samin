@@ -38,6 +38,8 @@ dependencies:
   just_audio: ^0.9.28
   http: ^0.13.5
   flutter_spinkit: ^5.1.0
+  flutter_share: ^2.0.0
+
   
 
 

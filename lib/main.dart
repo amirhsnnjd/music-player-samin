@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player_project/Album.dart';
@@ -82,6 +83,7 @@ class _MyAppState extends State<MyApp> {
                     future: sn.album,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
+                        sn.set(snapshot);
                         return Column(
                           children: [
                             Container(
@@ -132,36 +134,50 @@ class _MyAppState extends State<MyApp> {
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 150),
-                  child: Container(
-                    width: 70,
-                    height: 70,
-                    child: FittedBox(
-                      child: FloatingActionButton(
-                          backgroundColor: Colors.green,
-                          child: pl.play
-                              ? Icon(
-                                  Icons.pause,
-                                  size: 28,
-                                )
-                              : Icon(
-                                  Icons.play_arrow,
-                                  size: 28,
-                                ),
-                          onPressed: () async {
-                            pl.resize();
+                Row(
+                  children: [
+                    ElevatedButton(
+                        onPressed: () async {
+                          await FlutterShare.share(
+                              title: "example",
+                              text: sn.snapshot.data!.data!.first.song,
+                              linkUrl:
+                                  sn.snapshot.data!.data!.first.track!.buyurl);
+                        },
+                        child: Icon(Icons.share)),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 150, left: 50),
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        child: FittedBox(
+                          child: FloatingActionButton(
+                              backgroundColor: Colors.green,
+                              child: pl.play
+                                  ? Icon(
+                                      Icons.pause,
+                                      size: 28,
+                                    )
+                                  : Icon(
+                                      Icons.play_arrow,
+                                      size: 28,
+                                    ),
+                              onPressed: () async {
+                                pl.resize();
 
-                            if (pl.play) {
-                              await player.setAudioSource(AudioSource.uri(Uri.parse(
-                                  'http://cast1.my-control-panel.com:7099/live')));
+                                if (pl.play) {
+                                  await player.setAudioSource(AudioSource.uri(
+                                      Uri.parse(
+                                          'http://cast1.my-control-panel.com:7099/live')));
 
-                              await player.play();
-                            } else
-                              await player.pause();
-                          }),
+                                  await player.play();
+                                } else
+                                  await player.pause();
+                              }),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
